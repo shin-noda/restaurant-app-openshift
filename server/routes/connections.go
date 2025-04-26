@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log"
 	"os"
@@ -11,42 +12,46 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// DBinstance func
+// DBinstance creates a MongoDB client
 func DBinstance() *mongo.Client {
+	// Optional: load .env if needed
 	/*
 		err := godotenv.Load(".env")
-
 		if err != nil {
 			log.Fatal("Error loading .env file")
 		}
 	*/
 
 	MongoDb := os.Getenv("MONGODB_URL")
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
-	if err != nil {
-		log.Fatal(err)
+	if MongoDb == "" {
+		log.Fatal("MONGODB_URL not set in environment")
 	}
+
+	clientOptions := options.Client().
+		ApplyURI(MongoDb).
+		SetTLSConfig(&tls.Config{}) // ADD THIS LINE for TLS!
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
 	defer cancel()
-	err = client.Connect(ctx)
+
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected to MongoDB!")
 
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("✅ Connected to MongoDB!")
 	return client
 }
 
 // Client Database instance
 var Client *mongo.Client = DBinstance()
 
-// OpenCollection is a  function makes a connection with a collection in the database
+// OpenCollection connects to a specific collection
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-
-	var collection *mongo.Collection = client.Database("cluster0").Collection(collectionName)
-
-	return collection
+	return client.Database("cluster0").Collection(collectionName)
 }
