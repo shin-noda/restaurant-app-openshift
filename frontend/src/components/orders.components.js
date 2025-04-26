@@ -4,7 +4,7 @@ import {Button, Form, Container, Modal } from 'react-bootstrap'
 import Order from './single-order.component';
 
 const Orders = () => {
-    const API_URL = process.env.REACT_APP_API_URL
+    // const API_URL = process.env.REACT_APP_API_URL
 
     const [orders, setOrders] = useState([])
     const [refreshData, setRefreshData] = useState(false)
@@ -123,7 +123,8 @@ const Orders = () => {
     //changes the order
     function changeSingleOrder(){
         changeOrder.change = false;
-        var url = API_URL + "/order/update/" + changeOrder.id
+        // var url = API_URL + "/order/update/" + changeOrder.id
+        var url = "/order/update/" + changeOrder.id
         axios.put(url, newOrder)
             .then(response => {
             if(response.status == 200){
@@ -135,7 +136,8 @@ const Orders = () => {
     //creates a new order
     function addSingleOrder(){
         setAddNewOrder(false)
-        var url = API_URL + "/order/create"
+        // var url = API_URL + "/order/create"
+        var url = "/order/create"
         axios.post(url, {
             "server": newOrder.server,
             "dish": newOrder.dish,
@@ -150,7 +152,8 @@ const Orders = () => {
 
     //gets all the orders
     function getAllOrders(){
-        var url = API_URL + "/orders"
+        // var url = API_URL + "/orders"
+        var url = "/orders"
         axios.get(url, {
             responseType: 'json'
         }).then(response => {
@@ -162,7 +165,8 @@ const Orders = () => {
 
     //deletes a single order
     function deleteSingleOrder(id){
-        var url = API_URL + "/order/delete/" + id
+        // var url = API_URL + "/order/delete/" + id
+        var url = "/order/delete/" + id
         axios.delete(url, {
 
         }).then(response => {
