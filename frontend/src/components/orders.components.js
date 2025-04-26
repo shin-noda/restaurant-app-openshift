@@ -108,7 +108,8 @@ const Orders = () => {
     //changes the waiter
     function changeWaiterForOrder(){
         changeWaiter.change = false
-        var url = API_URL + "/waiter/update/" + changeWaiter.id
+        // var url = API_URL + "/waiter/update/" + changeWaiter.id
+        var url = "/waiter/update/" + changeWaiter.id
         axios.put(url, {
             "server": newWaiterName
         }).then(response => {
